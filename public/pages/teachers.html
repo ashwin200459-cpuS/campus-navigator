@@ -1,0 +1,27 @@
+
+<html><head><link rel='stylesheet' href='../css/style.css'></head>
+<body><div class='card'>
+<h2>Teachers</h2>
+<input id='search' placeholder='Search'>
+<div id='list'></div>
+<div id='form'></div>
+</div>
+<script>
+let role=localStorage.getItem('role'),data=[];
+async function load(){
+data=await fetch('/teachers').then(r=>r.json());
+render(data);
+if(role==='admin'){
+form.innerHTML=`<input id=n><input id=d><button onclick='add()'>Add</button>`;
+}
+}
+function render(arr){
+list.innerHTML=arr.length?arr.map(x=>`<p>${x.name} - ${x.dept}</p>`).join(''):'No teachers';
+}
+search.oninput=()=>render(data.filter(x=>x.name.toLowerCase().includes(search.value.toLowerCase())||x.dept.toLowerCase().includes(search.value.toLowerCase())));
+async function add(){
+await fetch('/teachers',{method:'POST',headers:{'Content-Type':'application/json','role':role},body:JSON.stringify({name:n.value,dept:d.value})});
+load();
+}
+load();
+</script></body></html>

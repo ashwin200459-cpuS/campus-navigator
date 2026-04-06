@@ -1,0 +1,21 @@
+
+<html><head><link rel='stylesheet' href='css/style.css'></head>
+<body><div class='card'>
+<h2 id='title'>Login</h2>
+<input id='u'><input id='p' type='password'>
+<button class='btn' onclick='submitForm()'>Submit</button>
+<p onclick='toggle()'>Create Account</p>
+</div>
+<script>
+let isSignup=false;
+function toggle(){isSignup=!isSignup;title.innerText=isSignup?'Create':'Login'}
+async function submitForm(){
+let url=isSignup?'/register':'/login';
+let r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({username:u.value,password:p.value})});
+let d=await r.json();
+if(!r.ok)return alert(d.error);
+if(isSignup){alert('Created');toggle();}
+else{localStorage.setItem('role',d.role);localStorage.setItem('user',d.username);location='pages/dashboard.html'}
+}
+</script></body></html>
