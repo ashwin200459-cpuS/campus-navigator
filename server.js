@@ -34,7 +34,7 @@ app.post("/signup",(req,res)=>{
 // LOGIN
 app.post("/login",(req,res)=>{
     const {userId,password} = req.body;
-    localStorage.setItem("user", JSON.stringify(data.user));
+   
 
     const user = users.find(u=>u.userId===userId && u.password===password);
 
