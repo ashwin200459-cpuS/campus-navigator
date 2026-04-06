@@ -20,7 +20,7 @@ body { font-family: 'Inter', sans-serif; background:#0b1324; }
 <!-- 🔐 AUTH CHECK -->
 <script>
 const user = JSON.parse(localStorage.getItem("user"));
-if(!user){ window.location.href="/login.html"; }
+if(!user){ window.location.href="index.html"; } // ✅ FIXED
 </script>
 
 <!-- SIDEBAR -->
@@ -28,10 +28,10 @@ if(!user){ window.location.href="/login.html"; }
 
 <h1 class="text-blue-400 font-bold mb-6">CampusNavigator</h1>
 
-<a href="/dashboard.html" class="mb-2 text-gray-400">Dashboard</a>
-<a href="/guide.html" class="mb-2 text-gray-400">Guide</a>
-<a href="/teachers.html" class="mb-2 text-blue-300">Teachers</a>
-<a href="/forum.html" class="mb-2 text-gray-400">Forum</a>
+<a href="dashboard.html" class="mb-2 text-gray-400">Dashboard</a>
+<a href="guide.html" class="mb-2 text-gray-400">Guide</a>
+<a href="teachers.html" class="mb-2 text-blue-300">Teachers</a>
+<a href="forum.html" class="mb-2 text-gray-400">Forum</a>
 
 <div class="mt-auto">
     <p id="userName"></p>
@@ -48,7 +48,6 @@ if(!user){ window.location.href="/login.html"; }
 
 <div class="grid md:grid-cols-3 gap-6">
 
-<!-- Teacher Card -->
 <div class="bg-[#131b2c] p-6 rounded-xl">
     <h3 class="text-lg font-bold">Xenon Malek</h3>
     <p class="text-sm text-blue-300">Bio-Digital Synthesis</p>
@@ -64,7 +63,6 @@ if(!user){ window.location.href="/login.html"; }
     </div>
 </div>
 
-<!-- Teacher Card -->
 <div class="bg-[#131b2c] p-6 rounded-xl">
     <h3 class="text-lg font-bold">Lyra Solstice</h3>
     <p class="text-sm text-blue-300">Atmospheric Engineering</p>
@@ -80,7 +78,6 @@ if(!user){ window.location.href="/login.html"; }
     </div>
 </div>
 
-<!-- Teacher Card -->
 <div class="bg-[#131b2c] p-6 rounded-xl">
     <h3 class="text-lg font-bold">Cyrus Voss</h3>
     <p class="text-sm text-blue-300">Neural Kinematics</p>
@@ -109,13 +106,13 @@ document.getElementById("userId").innerText = "ID: " + user.userId;
 // 🚪 LOGOUT
 function logout(){
     localStorage.removeItem("user");
-    window.location.href="/login.html";
+    window.location.href="index.html"; // ✅ FIXED
 }
 
-// 💬 MESSAGE SYSTEM (future ready)
+// 💬 MESSAGE SYSTEM
 function messageTeacher(name){
     localStorage.setItem("chatTarget", name);
-    window.location.href="/forum.html";
+    window.location.href="forum.html"; // ✅ FIXED
 }
 
 // 📄 VIEW BIO
