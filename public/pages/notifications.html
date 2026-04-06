@@ -1,64 +1,90 @@
+<!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="../css/style.css">
+<title>Notifications</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class='container'>
-<div class="card">
-<h2>Notifications</h2>
 
-<div id="list"></div>
-<div id="form"></div>
+<body class="bg-[#0b1324] text-white">
 
-</div>
-</div>
 <script>
-let role = localStorage.getItem('role');
+// 🔐 AUTH
+const user = JSON.parse(localStorage.getItem("user"));
+if(!user) window.location.href="index.html";
+
+// 🌐 BASE URL
+const BASE_URL = "https://campus-navigator-vtx6.onrender.com";
+</script>
+
+<div class="p-6">
+
+<h1 class="text-2xl mb-6">Notifications</h1>
+
+<div id="list" class="space-y-4"></div>
+
+<div id="form" class="mt-6"></div>
+
+</div>
+
+<script>
+
 let data = [];
 
+// 🔄 LOAD
 async function load(){
-  data = await fetch('/notifications').then(r=>r.json());
+  const res = await fetch(BASE_URL + "/notifications");
+  data = await res.json();
 
-  // SORT newest first
+  // newest first
   data.sort((a,b)=> new Date(b.date) - new Date(a.date));
 
   render(data);
 
-  if(role === 'admin'){
-    form.innerHTML = `
-      <input id="t" placeholder="Message">
-      <button onclick="add()">Add</button>
+  // 👑 ADMIN ONLY
+  if(user.role === "admin"){
+    document.getElementById("form").innerHTML = `
+      <input id="t" class="p-2 bg-gray-800 rounded" placeholder="Message">
+      <button onclick="add()" class="bg-blue-500 px-3 py-1 ml-2 rounded">Add</button>
     `;
   }
 }
 
+// 📋 RENDER
 function render(arr){
+  const list = document.getElementById("list");
+
   list.innerHTML = arr.length
-  ? arr.map((x,i) => `
-    <div class="card">
+  ? arr.map(x => `
+    <div class="bg-gray-800 p-3 rounded">
       <b>${x.text}</b><br>
-      <small>${x.date}</small>
+      <small class="text-gray-400">${x.date}</small>
     </div>
   `).join('')
   : "No notifications yet";
 }
 
+// ➕ ADD
 async function add(){
-  await fetch('/notifications',{
+  const text = document.getElementById("t").value;
+
+  await fetch(BASE_URL + "/notifications",{
     method:'POST',
     headers:{
-      'Content-Type':'application/json',
-      'role':role
+      'Content-Type':'application/json'
     },
     body:JSON.stringify({
-      text:t.value,
+      text,
       date:new Date().toISOString().split('T')[0]
     })
   });
+
   load();
 }
 
+// 🚀 INITIAL LOAD
 load();
+
 </script>
+
 </body>
 </html>
