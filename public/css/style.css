@@ -63,3 +63,36 @@ button:hover {
 .card b {
   color: #111;
 }
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 2px solid #cbd5f5;   /* visible soft border */
+  outline: none;
+  transition: 0.2s;
+}
+
+input:focus, textarea:focus {
+  border-color: #2563eb;       /* blue highlight on focus */
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+}
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 2px solid #cbd5f5;   /* visible soft border */
+  outline: none;
+  transition: 0.2s;
+}
+
+input:focus, textarea:focus {
+  border-color: #2563eb;       /* blue highlight on focus */
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+}
+.container {
+  width: 100%;
+  max-width: 1000px;   /* increased width */
+  padding: 20px;
+}
