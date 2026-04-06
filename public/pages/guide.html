@@ -23,7 +23,7 @@ body { font-family: 'Inter', sans-serif; background:#0b1324; }
 <!-- 🔐 AUTH -->
 <script>
 const user = JSON.parse(localStorage.getItem("user"));
-if(!user){ window.location.href="/login.html"; }
+if(!user){ window.location.href="index.html"; } // ✅ FIXED
 </script>
 
 <!-- TOP BAR -->
@@ -41,10 +41,10 @@ if(!user){ window.location.href="/login.html"; }
 
     <h2 class="text-blue-300 font-bold mb-6">Navigator</h2>
 
-    <a href="/dashboard.html" class="mb-2 text-blue-300">Dashboard</a>
-    <a href="/guide.html" class="mb-2 text-white">Guide</a>
-    <a href="/forum.html" class="mb-2 text-gray-400">Forum</a>
-    <a href="/notifications.html" class="mb-2 text-gray-400">Notifications</a>
+    <a href="dashboard.html" class="mb-2 text-blue-300">Dashboard</a>
+    <a href="guide.html" class="mb-2 text-white">Guide</a>
+    <a href="forum.html" class="mb-2 text-gray-400">Forum</a>
+    <a href="notifications.html" class="mb-2 text-gray-400">Notifications</a>
 
     <div class="mt-auto">
         <p id="guideUserName"></p>
@@ -58,10 +58,8 @@ if(!user){ window.location.href="/login.html"; }
 
 <h1 class="text-4xl font-bold mb-10">Operational Guide</h1>
 
-<!-- LOCATIONS -->
 <div class="grid md:grid-cols-3 gap-6">
 
-<!-- Reception -->
 <div class="glass-panel p-6 rounded">
     <h3 class="text-xl mb-2">Central Reception</h3>
     <p class="text-gray-400 mb-4">Main entry point</p>
@@ -70,7 +68,6 @@ if(!user){ window.location.href="/login.html"; }
     </button>
 </div>
 
-<!-- Library -->
 <div class="glass-panel p-6 rounded">
     <h3 class="text-xl mb-2">Library</h3>
     <p class="text-gray-400 mb-4">Knowledge hub</p>
@@ -79,7 +76,6 @@ if(!user){ window.location.href="/login.html"; }
     </button>
 </div>
 
-<!-- Science -->
 <div class="glass-panel p-6 rounded">
     <h3 class="text-xl mb-2">Science Block</h3>
     <p class="text-gray-400 mb-4">Labs & research</p>
@@ -102,13 +98,13 @@ document.getElementById("topUser").innerText = user.userId;
 // 🚪 LOGOUT
 function logout(){
     localStorage.removeItem("user");
-    window.location.href="/login.html";
+    window.location.href="index.html"; // ✅ FIXED
 }
 
 // 🧭 MAP CONNECTION
 function goToMap(location){
     localStorage.setItem("mapTarget", location);
-    window.location.href="/map.html";
+    window.location.href="map.html"; // ✅ FIXED
 }
 
 </script>
