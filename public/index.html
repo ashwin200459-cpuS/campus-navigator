@@ -1,161 +1,119 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>CampusNavigator - Secure Access</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "primary-fixed": "#d9e2ff",
-                    "outline-variant": "#434653",
-                    "tertiary-fixed": "#e2e2e2",
-                    "error": "#ffb4ab",
-                    "surface-container-high": "#222a3b",
-                    "primary-fixed-dim": "#b1c5ff",
-                    "on-surface": "#dae2fa",
-                    "on-primary": "#002c70",
-                    "on-surface-variant": "#c3c6d5",
-                    "on-secondary": "#283042",
-                    "inverse-surface": "#dae2fa",
-                    "surface-container-lowest": "#060e1e",
-                    "secondary-container": "#41495c",
-                    "secondary-fixed": "#dae2fa",
-                    "primary": "#b1c5ff",
-                    "on-secondary-fixed-variant": "#3f4759",
-                    "tertiary": "#c6c6c7",
-                    "on-primary-fixed": "#001946",
-                    "secondary-fixed-dim": "#bec6dd",
-                    "on-error": "#690005",
-                    "on-secondary-container": "#b0b8ce",
-                    "tertiary-container": "#696b6b",
-                    "on-primary-container": "#e7ebff",
-                    "on-error-container": "#ffdad6",
-                    "surface-container-low": "#131b2c",
-                    "surface-variant": "#2d3547",
-                    "on-primary-fixed-variant": "#00419d",
-                    "outline": "#8d909e",
-                    "on-background": "#dae2fa",
-                    "surface": "#0b1324",
-                    "inverse-primary": "#2259bf",
-                    "on-tertiary-fixed": "#1a1c1c",
-                    "inverse-on-surface": "#283042",
-                    "on-secondary-fixed": "#131b2c",
-                    "on-tertiary": "#2f3131",
-                    "surface-container-highest": "#2d3547",
-                    "surface-bright": "#31394b",
-                    "surface-container": "#171f30",
-                    "secondary": "#bec6dd",
-                    "surface-tint": "#b1c5ff",
-                    "error-container": "#93000a",
-                    "on-tertiary-fixed-variant": "#454747",
-                    "background": "#0b1324",
-                    "primary-container": "#3366cc",
-                    "tertiary-fixed-dim": "#c6c6c7",
-                    "on-tertiary-container": "#ececec",
-                    "surface-dim": "#0b1324"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-            },
-            "fontFamily": {
-                    "headline": ["Space Grotesk"],
-                    "body": ["Inter"],
-                    "label": ["Space Grotesk"]
-            }
-          },
-        },
-      }
-    </script>
-<style>
-        body {
-            background-color: #0b1324;
-            background-image: 
-                linear-gradient(rgba(177, 197, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(177, 197, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: center center;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        }
-        .neon-glow {
-            text-shadow: 0 0 10px rgba(177, 197, 255, 0.5), 0 0 20px rgba(177, 197, 255, 0.3);
-        }
-    </style>
+<html class="dark">
+<head>
+<meta charset="UTF-8">
+<title>CampusNavigator Access</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="font-body text-on-surface min-h-screen flex flex-col items-center justify-center p-6 selection:bg-primary/30">
-<div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full"></div>
-<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary-container/10 blur-[120px] rounded-full"></div>
+
+<body class="bg-[#0b1324] text-white flex items-center justify-center min-h-screen">
+
+<div class="w-full max-w-md bg-[#131b2c] p-8 rounded-xl">
+
+<h1 class="text-3xl text-center mb-6">SYSTEM ACCESS</h1>
+
+<!-- TOGGLE -->
+<div class="flex justify-center mb-4">
+    <button onclick="showLogin()" class="px-4 py-2 bg-blue-500 rounded-l">Login</button>
+    <button onclick="showSignup()" class="px-4 py-2 bg-gray-600 rounded-r">Signup</button>
 </div>
-<header class="mb-12 flex flex-col items-center">
-<div class="flex items-center gap-3 mb-2">
-<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">deployed_code</span>
-<h2 class="font-headline text-2xl font-bold tracking-tighter text-primary drop-shadow-[0_0_8px_rgba(177,197,255,0.4)]">CampusNavigator</h2>
-</div>
-<p class="font-label text-[10px] tracking-[0.3em] uppercase opacity-40">System Access Protocol 7.42</p>
-</header>
-<main class="w-full max-w-[440px] relative">
-<div class="bg-surface-container-low/60 backdrop-blur-2xl rounded-xl p-10 shadow-[0_40px_100px_rgba(0,0,0,0.5)] border border-outline-variant/10">
-<div class="mb-10 text-center">
-<h1 class="font-headline text-4xl font-bold tracking-widest text-primary-fixed-dim uppercase neon-glow mb-2">LOGIN</h1>
-<div class="h-[2px] w-12 bg-primary-container mx-auto rounded-full"></div>
-</div>
-<form class="space-y-8" onsubmit="return false;">
-<div class="space-y-2">
-<label class="font-label text-[11px] tracking-widest uppercase text-on-surface-variant/70 ml-1">Identity ID</label>
-<div class="relative group">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 group-focus-within:text-primary transition-colors duration-300">fingerprint</span>
-<input class="w-full bg-surface-container-lowest/40 border-none ring-1 ring-outline-variant/30 rounded-lg py-4 pl-12 pr-4 text-on-surface font-headline tracking-wider placeholder:text-on-surface-variant/20 focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all duration-300 outline-none" placeholder="CN-XXXX-XXXX" type="text"/>
-</div>
-</div>
-<div class="space-y-2">
-<label class="font-label text-[11px] tracking-widest uppercase text-on-surface-variant/70 ml-1">Passcode</label>
-<div class="relative group">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 group-focus-within:text-primary transition-colors duration-300">key</span>
-<input class="w-full bg-surface-container-lowest/40 border-none ring-1 ring-outline-variant/30 rounded-lg py-4 pl-12 pr-4 text-on-surface font-headline tracking-wider placeholder:text-on-surface-variant/20 focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all duration-300 outline-none" placeholder="••••••••" type="password"/>
-</div>
-</div>
-<div class="pt-4 flex flex-col gap-4">
-<button class="w-full bg-gradient-to-r from-primary-container to-primary py-4 rounded-lg text-on-primary font-headline font-bold tracking-widest uppercase hover:shadow-[0_0_25px_rgba(177,197,255,0.3)] active:scale-95 transition-all duration-300">
-                        ACCESS SYSTEM
-                    </button>
-<button class="w-full border border-primary/30 py-4 rounded-lg text-primary font-headline font-bold tracking-widest uppercase hover:bg-primary/5 active:scale-95 transition-all duration-300">
-                        CREATE NEW ACCOUNT
-                    </button>
-</div>
+
+<!-- LOGIN -->
+<form id="loginForm" class="space-y-4">
+    <input id="loginId" placeholder="User ID" class="w-full p-2 bg-black border"/>
+    <input id="loginPass" type="password" placeholder="Password" class="w-full p-2 bg-black border"/>
+
+    <button class="w-full bg-blue-500 p-2">Login</button>
 </form>
-<div class="mt-10 flex justify-center">
-<a class="font-label text-[11px] tracking-widest uppercase text-on-surface-variant/40 hover:text-primary-fixed-dim transition-colors duration-300 decoration-primary/20 underline-offset-4" href="#">
-                    Forgot Passcode?
-                </a>
+
+<!-- SIGNUP -->
+<form id="signupForm" class="space-y-4 hidden">
+    <input id="signupId" placeholder="User ID" class="w-full p-2 bg-black border"/>
+    <input id="signupPass" type="password" placeholder="Password" class="w-full p-2 bg-black border"/>
+
+    <button class="w-full bg-green-500 p-2">Create Account</button>
+</form>
+
+<!-- ADMIN REQUEST -->
+<button onclick="requestAdmin()" class="w-full mt-4 bg-purple-500 p-2">
+    Request Admin Access
+</button>
+
+<p id="msg" class="text-center mt-3"></p>
+
 </div>
-</div>
-<div class="mt-8 flex justify-between px-4">
-<div class="flex items-center gap-2">
-<div class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-<span class="font-label text-[9px] tracking-widest uppercase text-on-surface-variant/30">Node_01_Active</span>
-</div>
-<span class="font-label text-[9px] tracking-widest uppercase text-on-surface-variant/30">Lat: 34.0522° N | Long: 118.2437° W</span>
-</div>
-</main>
-<footer class="fixed bottom-0 w-full flex flex-col items-center gap-4 pb-8">
-<div class="flex gap-8">
-<a class="font-['Space_Grotesk'] text-[10px] tracking-[0.2em] uppercase text-slate-500 opacity-40 hover:text-[#b1c5ff] hover:opacity-100 transition-opacity" href="#">Security Protocols</a>
-<a class="font-['Space_Grotesk'] text-[10px] tracking-[0.2em] uppercase text-slate-500 opacity-40 hover:text-[#b1c5ff] hover:opacity-100 transition-opacity" href="#">Privacy Policy</a>
-<a class="font-['Space_Grotesk'] text-[10px] tracking-[0.2em] uppercase text-slate-500 opacity-40 hover:text-[#b1c5ff] hover:opacity-100 transition-opacity" href="#">System Status</a>
-</div>
-<p class="font-['Space_Grotesk'] text-[10px] tracking-[0.2em] uppercase text-[#b1c5ff] opacity-40">© 2024 ASTRAEAN CAMPUS SYSTEMS. ALL RIGHTS RESERVED.</p>
-</footer>
-</body></html>
+
+<script>
+
+// TOGGLE
+function showLogin(){
+    loginForm.classList.remove("hidden");
+    signupForm.classList.add("hidden");
+}
+function showSignup(){
+    signupForm.classList.remove("hidden");
+    loginForm.classList.add("hidden");
+}
+
+// LOGIN
+loginForm.addEventListener("submit", async e=>{
+    e.preventDefault();
+
+    const userId = loginId.value;
+    const password = loginPass.value;
+
+    const res = await fetch("http://localhost:5000/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({userId,password})
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+        if(data.role==="admin"){
+            window.location.href="/admin.html";
+        } else {
+            window.location.href="/dashboard.html";
+        }
+    } else {
+        msg.innerText="Invalid login";
+    }
+});
+
+// SIGNUP (USER ONLY)
+signupForm.addEventListener("submit", async e=>{
+    e.preventDefault();
+
+    const userId = signupId.value;
+    const password = signupPass.value;
+
+    const res = await fetch("http://localhost:5000/signup",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({userId,password})
+    });
+
+    const data = await res.json();
+
+    msg.innerText = data.message;
+});
+
+// ADMIN REQUEST
+async function requestAdmin(){
+    const userId = prompt("Enter your User ID");
+
+    const res = await fetch("http://localhost:5000/request-admin",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({userId})
+    });
+
+    const data = await res.json();
+    msg.innerText = data.message;
+}
+
+</script>
+
+</body>
+</html>
