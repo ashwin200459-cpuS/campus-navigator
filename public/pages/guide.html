@@ -1,0 +1,73 @@
+<html>
+<head>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="card">
+<h2>Guide</h2>
+
+<input id="search" placeholder="Search locations...">
+
+<div id="list"></div>
+<div id="form"></div>
+
+</div>
+
+<script>
+let role = localStorage.getItem('role');
+let data = [];
+
+async function load(){
+  data = await fetch('/guide').then(r=>r.json());
+  render(data);
+
+  if(role === 'admin'){
+    form.innerHTML = `
+      <input id="n" placeholder="Name">
+      <input id="l" placeholder="Location">
+      <input id="d" placeholder="Description">
+      <button onclick="add()">Add</button>
+    `;
+  }
+}
+
+function render(arr){
+  list.innerHTML = arr.length
+  ? arr.map(x => `
+    <div class="card">
+      <b>${x.name}</b><br>
+      ${x.location}<br>
+      <small>${x.desc || ''}</small>
+    </div>
+  `).join('')
+  : "No locations found";
+}
+
+search.oninput = () => {
+  let val = search.value.toLowerCase();
+  render(data.filter(x =>
+    x.name.toLowerCase().includes(val) ||
+    x.location.toLowerCase().includes(val)
+  ));
+};
+
+async function add(){
+  await fetch('/guide',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'role':role
+    },
+    body:JSON.stringify({
+      name:n.value,
+      location:l.value,
+      desc:d.value
+    })
+  });
+  load();
+}
+
+load();
+</script>
+</body>
+</html>
