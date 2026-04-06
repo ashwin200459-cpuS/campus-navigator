@@ -1,0 +1,63 @@
+<html>
+<head>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="card">
+<h2>Notifications</h2>
+
+<div id="list"></div>
+<div id="form"></div>
+
+</div>
+
+<script>
+let role = localStorage.getItem('role');
+let data = [];
+
+async function load(){
+  data = await fetch('/notifications').then(r=>r.json());
+
+  // SORT newest first
+  data.sort((a,b)=> new Date(b.date) - new Date(a.date));
+
+  render(data);
+
+  if(role === 'admin'){
+    form.innerHTML = `
+      <input id="t" placeholder="Message">
+      <button onclick="add()">Add</button>
+    `;
+  }
+}
+
+function render(arr){
+  list.innerHTML = arr.length
+  ? arr.map((x,i) => `
+    <div class="card">
+      <b>${x.text}</b><br>
+      <small>${x.date}</small>
+    </div>
+  `).join('')
+  : "No notifications yet";
+}
+
+async function add(){
+  await fetch('/notifications',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'role':role
+    },
+    body:JSON.stringify({
+      text:t.value,
+      date:new Date().toISOString().split('T')[0]
+    })
+  });
+  load();
+}
+
+load();
+</script>
+</body>
+</html>
