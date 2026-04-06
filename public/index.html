@@ -41,7 +41,7 @@ body {
 
     <button id="loginBtn"
         class="w-full bg-gradient-to-r from-blue-500 to-blue-300 py-3 rounded font-bold tracking-widest">
-        ACCESS SYSTEM
+        LOGIN
     </button>
 </form>
 
@@ -109,7 +109,7 @@ loginForm.addEventListener("submit", async e=>{
     loginBtn.disabled=true;
 
     try{
-        const res = await fetch("http://localhost:5000/login",{
+        const res = await fetch("https://campus-navigator-vtx6.onrender.com",{
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({userId,password})
@@ -147,7 +147,7 @@ signupForm.addEventListener("submit", async e=>{
     const userId = signupId.value.trim();
     const password = signupPass.value.trim();
 
-    const res = await fetch("http://localhost:5000/signup",{
+    const res = await fetch("https://campus-navigator-vtx6.onrender.com",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({userId,password})
@@ -163,7 +163,7 @@ async function requestAdmin(){
 
     if(!userId) return;
 
-    const res = await fetch("http://localhost:5000/request-admin",{
+    const res = await fetch("https://campus-navigator-vtx6.onrender.com",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({userId})
