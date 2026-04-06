@@ -22,7 +22,7 @@ body { font-family: 'Inter', sans-serif; background-color: #0b1324; }
 const user = JSON.parse(localStorage.getItem("user"));
 
 if(!user){
-    window.location.href = "/login.html";
+    window.location.href = "index.html"; // ✅ FIXED
 }
 </script>
 
@@ -82,20 +82,20 @@ document.getElementById("userRole").innerText = "Role: " + user.role;
 // 🚪 LOGOUT
 function logout(){
     localStorage.removeItem("user");
-    window.location.href = "/login.html";
+    window.location.href = "index.html"; // ✅ FIXED
 }
 
-// 🔗 PAGE NAVIGATION (AUTO CONNECT SYSTEM)
+// 🔗 PAGE NAVIGATION
 function goPage(page){
 
     if(page === "map"){
-        window.location.href = "/map.html";
+        window.location.href = "map.html"; // ✅ FIXED
     }
     else if(page === "forum"){
-        window.location.href = "/forum.html";
+        window.location.href = "forum.html"; // ✅ FIXED
     }
     else if(page === "notifications"){
-        window.location.href = "/notifications.html";
+        window.location.href = "notifications.html"; // ✅ FIXED
     }
 }
 
