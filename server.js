@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 
@@ -7,13 +8,18 @@ const app = express();
 app.use(express.json({limit:"10mb"}));
 app.use(cors());
 
+// ================= SERVE FRONTEND =================
+app.use(express.static(path.join(__dirname, "public")));
+
 // ================= TEMP DATABASE =================
 let users = [];
 let pendingAdmins = [];
 let posts = [];
+let notifications = [];
 
-// ================= AUTH =================
+// ================= AUTH SYSTEM =================
 
+// SIGNUP
 app.post("/signup",(req,res)=>{
     const {userId,password} = req.body;
 
@@ -25,6 +31,7 @@ app.post("/signup",(req,res)=>{
     res.json({success:true});
 });
 
+// LOGIN
 app.post("/login",(req,res)=>{
     const {userId,password} = req.body;
 
@@ -32,11 +39,40 @@ app.post("/login",(req,res)=>{
 
     if(!user) return res.json({success:false});
 
-    res.json({success:true,user});
+    res.json({
+        success:true,
+        user:{
+            userId:user.userId,
+            role:user.role
+        }
+    });
+});
+
+// ADMIN REQUEST
+app.post("/requestAdmin",(req,res)=>{
+    const {userId,password} = req.body;
+
+    pendingAdmins.push({userId,password});
+    res.json({success:true,message:"Request sent"});
+});
+
+// APPROVE ADMIN (manual)
+app.post("/approveAdmin",(req,res)=>{
+    const {userId} = req.body;
+
+    const index = pendingAdmins.findIndex(u=>u.userId===userId);
+    if(index === -1) return res.json({success:false});
+
+    const admin = pendingAdmins[index];
+    users.push({...admin, role:"admin"});
+    pendingAdmins.splice(index,1);
+
+    res.json({success:true});
 });
 
 // ================= FORUM =================
 
+// CREATE POST
 app.post("/createPost",(req,res)=>{
     const {userId,text,image} = req.body;
 
@@ -53,10 +89,12 @@ app.post("/createPost",(req,res)=>{
     res.json({success:true});
 });
 
+// GET POSTS
 app.get("/getPosts",(req,res)=>{
     res.json(posts);
 });
 
+// LIKE
 app.post("/likePost",(req,res)=>{
     const {id} = req.body;
 
@@ -66,6 +104,7 @@ app.post("/likePost",(req,res)=>{
     res.json({success:true});
 });
 
+// COMMENT
 app.post("/commentPost",(req,res)=>{
     const {id,userId,comment} = req.body;
 
@@ -75,18 +114,14 @@ app.post("/commentPost",(req,res)=>{
     res.json({success:true});
 });
 
-// ================= ROOT =================
-app.get("/",(req,res)=>{
-    res.send("Backend running 🚀");
-});
-let notifications = [];
+// ================= NOTIFICATIONS =================
 
 // GET
 app.get("/notifications",(req,res)=>{
     res.json(notifications);
 });
 
-// POST (admin use)
+// POST
 app.post("/notifications",(req,res)=>{
     const {text,date} = req.body;
 
@@ -94,12 +129,16 @@ app.post("/notifications",(req,res)=>{
     res.json({success:true});
 });
 
-// ================= PORT FIX =================
+// ================= DEFAULT ROUTE =================
+
+// If no API matched → send index.html
+app.get("*",(req,res)=>{
+    res.sendFile(path.join(__dirname,"public","index.html"));
+});
+
+// ================= SERVER =================
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT,()=>{
     console.log("Server running on port " + PORT);
 });
-const path = require("path");
-
-app.use(express.static(path.join(__dirname, "public")));
