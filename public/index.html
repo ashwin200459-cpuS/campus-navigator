@@ -10,9 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
 
 <style>
-body {
-    background-color: #0b1324;
-}
+body { background-color: #0b1324; }
 .neon-glow {
     text-shadow: 0 0 10px rgba(177,197,255,0.5), 0 0 20px rgba(177,197,255,0.3);
 }
@@ -25,13 +23,11 @@ body {
 
 <h1 class="text-4xl text-center neon-glow mb-8 font-bold tracking-widest">LOGIN</h1>
 
-<!-- TOGGLE -->
 <div class="flex mb-6">
     <button onclick="showLogin()" class="w-1/2 py-2 bg-blue-600">Login</button>
     <button onclick="showSignup()" class="w-1/2 py-2 bg-gray-700">Signup</button>
 </div>
 
-<!-- LOGIN -->
 <form id="loginForm" class="space-y-6">
     <input id="loginId" placeholder="Identity ID"
         class="w-full p-3 bg-black/40 border border-gray-600 rounded"/>
@@ -41,11 +37,10 @@ body {
 
     <button id="loginBtn"
         class="w-full bg-gradient-to-r from-blue-500 to-blue-300 py-3 rounded font-bold tracking-widest">
-        LOGIN
+        ACCESS SYSTEM
     </button>
 </form>
 
-<!-- SIGNUP -->
 <form id="signupForm" class="space-y-6 hidden">
     <input id="signupId" placeholder="Identity ID"
         class="w-full p-3 bg-black/40 border border-gray-600 rounded"/>
@@ -58,7 +53,6 @@ body {
     </button>
 </form>
 
-<!-- ADMIN REQUEST -->
 <button onclick="requestAdmin()" 
     class="w-full mt-4 border border-purple-400 py-3 rounded text-purple-300">
     Request Admin Access
@@ -73,6 +67,9 @@ body {
 </div>
 
 <script>
+
+// 🌐 BASE URL
+const BASE_URL = "https://campus-navigator-vtx6.onrender.com";
 
 // 🌌 TOGGLE
 function showLogin(){
@@ -109,7 +106,7 @@ loginForm.addEventListener("submit", async e=>{
     loginBtn.disabled=true;
 
     try{
-        const res = await fetch("https://campus-navigator-vtx6.onrender.com",{
+        const res = await fetch(BASE_URL + "/login",{
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({userId,password})
@@ -120,8 +117,11 @@ loginForm.addEventListener("submit", async e=>{
         if(data.success){
             statusMsg.innerText="✅ Access Granted";
 
+            // SAVE USER
+            localStorage.setItem("user", JSON.stringify(data.user));
+
             setTimeout(()=>{
-                if(data.role==="admin"){
+                if(data.user.role==="admin"){
                     window.location.href="/admin.html";
                 } else {
                     window.location.href="/dashboard.html";
@@ -147,26 +147,33 @@ signupForm.addEventListener("submit", async e=>{
     const userId = signupId.value.trim();
     const password = signupPass.value.trim();
 
-    const res = await fetch("https://campus-navigator-vtx6.onrender.com",{
+    const res = await fetch(BASE_URL + "/signup",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({userId,password})
     });
 
     const data = await res.json();
-    statusMsg.innerText = data.message;
+
+    if(data.success){
+        statusMsg.innerText="✅ Account Created";
+        showLogin();
+    } else {
+        statusMsg.innerText=data.message || "Error";
+    }
 });
 
 // 👑 ADMIN REQUEST
 async function requestAdmin(){
     const userId = prompt("Enter your User ID");
+    const password = prompt("Enter your Password");
 
-    if(!userId) return;
+    if(!userId || !password) return;
 
-    const res = await fetch("https://campus-navigator-vtx6.onrender.com",{
+    const res = await fetch(BASE_URL + "/requestAdmin",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({userId})
+        body:JSON.stringify({userId,password})
     });
 
     const data = await res.json();
