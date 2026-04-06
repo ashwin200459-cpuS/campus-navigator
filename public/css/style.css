@@ -55,3 +55,11 @@ button:hover {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.card p {
+  margin: 8px 0;
+  color: #333;
+}
+
+.card b {
+  color: #111;
+}
