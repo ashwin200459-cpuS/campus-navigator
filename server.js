@@ -1,132 +1,121 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
-const bcrypt = require("bcryptjs");
 
 const app = express();
 
-// 🔐 MIDDLEWARE
-app.use(express.json());
-app.use(cors({
-    origin: "*"
-}));
+// ================= MIDDLEWARE =================
+app.use(express.json({limit:"10mb"}));
+app.use(cors());
 
-// 🌐 PORT
-const PORT = process.env.PORT || 5000;
+// ================= TEMP DATABASE =================
+let users = [];
+let pendingAdmins = [];
+let posts = [];
 
-// 🧠 CONNECT DB
-mongoose.connect(process.env.MONGO_URI)
-.then(()=> console.log("MongoDB Connected"))
-.catch(err => console.log(err));
+// ================= AUTH SYSTEM =================
 
-// 📦 SCHEMA
-const UserSchema = new mongoose.Schema({
-    userId: { type:String, required:true, unique:true },
-    password: { type:String, required:true },
-    role: { type:String, default:"user" },
-    adminRequest: { type:Boolean, default:false }
+// USER SIGNUP
+app.post("/signup", (req,res)=>{
+    const {userId, password} = req.body;
+
+    const exists = users.find(u=>u.userId===userId);
+    if(exists) return res.json({success:false, message:"User already exists"});
+
+    users.push({userId,password,role:"user"});
+    res.json({success:true});
 });
 
-const User = mongoose.model("User", UserSchema);
+// ADMIN REQUEST (NOT DIRECT SIGNUP)
+app.post("/requestAdmin", (req,res)=>{
+    const {userId,password} = req.body;
 
-// 🧾 SIGNUP
-app.post("/signup", async (req,res)=>{
-    try{
-        const {userId,password} = req.body;
+    pendingAdmins.push({userId,password});
+    res.json({success:true, message:"Request sent"});
+});
 
-        const exists = await User.findOne({userId});
-        if(exists){
-            return res.json({message:"User already exists"});
+// ADMIN APPROVAL (ONLY YOU USE THIS)
+app.post("/approveAdmin",(req,res)=>{
+    const {userId} = req.body;
+
+    const index = pendingAdmins.findIndex(u=>u.userId===userId);
+    if(index===-1) return res.json({success:false});
+
+    const admin = pendingAdmins[index];
+    users.push({...admin, role:"admin"});
+    pendingAdmins.splice(index,1);
+
+    res.json({success:true});
+});
+
+// LOGIN
+app.post("/login",(req,res)=>{
+    const {userId,password} = req.body;
+
+    const user = users.find(u=>u.userId===userId && u.password===password);
+
+    if(!user) return res.json({success:false});
+
+    res.json({
+        success:true,
+        user:{
+            userId:user.userId,
+            role:user.role
         }
-
-        const hashed = await bcrypt.hash(password,10);
-
-        await User.create({userId,password:hashed});
-
-        res.json({message:"Account created"});
-    }catch{
-        res.status(500).json({message:"Error"});
-    }
+    });
 });
 
-// 🔐 LOGIN
-app.post("/login", async (req,res)=>{
-    try{
-        const {userId,password} = req.body;
+// ================= FORUM SYSTEM =================
 
-        const user = await User.findOne({userId});
-        if(!user) return res.json({success:false});
+// CREATE POST
+app.post("/createPost",(req,res)=>{
+    const {userId, text, image} = req.body;
 
-        const match = await bcrypt.compare(password,user.password);
-        if(!match) return res.json({success:false});
+    const post = {
+        id: Date.now(),
+        userId,
+        text,
+        image,
+        likes: 0,
+        comments:[]
+    };
 
-        res.json({
-            success:true,
-            role:user.role,
-            userId:user.userId
-        });
-
-    }catch{
-        res.status(500).json({success:false});
-    }
+    posts.unshift(post);
+    res.json({success:true});
 });
 
-// 👑 REQUEST ADMIN
-app.post("/request-admin", async (req,res)=>{
-    try{
-        const {userId} = req.body;
-
-        await User.updateOne({userId},{adminRequest:true});
-
-        res.json({message:"Request sent"});
-    }catch{
-        res.status(500).json({message:"Error"});
-    }
+// GET POSTS
+app.get("/getPosts",(req,res)=>{
+    res.json(posts);
 });
 
-// 📋 GET REQUESTS
-app.get("/admin-requests", async (req,res)=>{
-    try{
-        const users = await User.find({adminRequest:true});
-        res.json(users);
-    }catch{
-        res.status(500).json([]);
-    }
+// LIKE POST
+app.post("/likePost",(req,res)=>{
+    const {id} = req.body;
+
+    const post = posts.find(p=>p.id==id);
+    if(post) post.likes++;
+
+    res.json({success:true});
 });
 
-// ✅ APPROVE ADMIN
-app.post("/approve-admin", async (req,res)=>{
-    try{
-        const {userId} = req.body;
+// COMMENT
+app.post("/commentPost",(req,res)=>{
+    const {id, userId, comment} = req.body;
 
-        await User.updateOne(
-            {userId},
-            {role:"admin", adminRequest:false}
-        );
-
-        res.json({message:"Approved"});
-    }catch{
-        res.status(500).json({message:"Error"});
+    const post = posts.find(p=>p.id==id);
+    if(post){
+        post.comments.push({userId, comment});
     }
+
+    res.json({success:true});
 });
 
-// ❌ REJECT ADMIN
-app.post("/reject-admin", async (req,res)=>{
-    try{
-        const {userId} = req.body;
-
-        await User.updateOne(
-            {userId},
-            {adminRequest:false}
-        );
-
-        res.json({message:"Rejected"});
-    }catch{
-        res.status(500).json({message:"Error"});
-    }
+// ================= ROOT =================
+app.get("/", (req,res)=>{
+    res.send("Campus Navigator Backend Running 🚀");
 });
 
-// 🚀 START SERVER
-app.listen(PORT, ()=>{
-    console.log(`Server running on port ${PORT}`);
+// ================= SERVER =================
+app.listen(5000, ()=>{
+    console.log("Server running on http://localhost:5000");
 });
