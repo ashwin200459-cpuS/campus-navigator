@@ -79,6 +79,20 @@ app.post("/commentPost",(req,res)=>{
 app.get("/",(req,res)=>{
     res.send("Backend running 🚀");
 });
+let notifications = [];
+
+// GET
+app.get("/notifications",(req,res)=>{
+    res.json(notifications);
+});
+
+// POST (admin use)
+app.post("/notifications",(req,res)=>{
+    const {text,date} = req.body;
+
+    notifications.unshift({text,date});
+    res.json({success:true});
+});
 
 // ================= PORT FIX =================
 const PORT = process.env.PORT || 5000;
