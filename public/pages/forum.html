@@ -1,47 +1,35 @@
-<html>
-<head>
-<link rel="stylesheet" href="../css/style.css">
-</head>
-
-<body>
-<div class="container">
-
-  <div class="card">
-    <h2>Forum</h2>
-
-    <select id="dept">
-      <option>CSE</option>
-      <option>IT</option>
-    </select>
-
-    <select id="year"><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Forum</title>
+<title>CampusNavigator Forum</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-[#0b1324] text-white">
 
 <script>
+// 🔐 AUTH
 const user = JSON.parse(localStorage.getItem("user"));
-if(!user) window.location.href="/login.html";
+if(!user) window.location.href="index.html";
+
+// 🌐 BASE URL
+const BASE_URL = "https://campus-navigator-vtx6.onrender.com";
 </script>
 
 <!-- NAV -->
-<div class="p-4 flex gap-4 bg-black">
-<a href="/dashboard.html">Dashboard</a>
-<a href="/guide.html">Guide</a>
-<a href="/teachers.html">Teachers</a>
-<a href="/forum.html" class="text-blue-400">Forum</a>
+<div class="p-4 flex gap-6 bg-black">
+<a href="dashboard.html">Dashboard</a>
+<a href="guide.html">Guide</a>
+<a href="teachers.html">Teachers</a>
+<a href="forum.html" class="text-blue-400">Forum</a>
 </div>
 
 <!-- CREATE POST -->
 <div class="p-6">
 <textarea id="postText" class="w-full p-3 bg-gray-800 rounded" placeholder="Write something..."></textarea>
 
-<input type="file" id="imageInput" class="mt-2">
+<input type="file" id="imageInput" class="mt-3">
 
 <button onclick="createPost()" class="mt-3 bg-blue-500 px-4 py-2 rounded">
 Post
@@ -53,7 +41,7 @@ Post
 
 <script>
 
-// CREATE POST
+// 📝 CREATE POST
 async function createPost(){
     const text = document.getElementById("postText").value;
     const file = document.getElementById("imageInput").files[0];
@@ -72,8 +60,9 @@ async function createPost(){
     }
 }
 
+// 📤 SEND POST
 async function sendPost(text,image){
-    await fetch("/createPost",{
+    await fetch(BASE_URL + "/createPost",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
@@ -84,9 +73,9 @@ async function sendPost(text,image){
     });
 }
 
-// LOAD POSTS
+// 📥 LOAD POSTS
 async function loadPosts(){
-    const res = await fetch("/getPosts");
+    const res = await fetch(BASE_URL + "/getPosts");
     const data = await res.json();
 
     const container = document.getElementById("posts");
@@ -95,7 +84,7 @@ async function loadPosts(){
     data.forEach(p=>{
         container.innerHTML += `
         <div class="bg-gray-800 p-4 rounded">
-            <h3>${p.userId}</h3>
+            <h3 class="font-bold">${p.userId}</h3>
             <p>${p.text}</p>
 
             ${p.image ? `<img src="${p.image}" class="mt-2 rounded">` : ""}
@@ -117,21 +106,21 @@ async function loadPosts(){
     });
 }
 
-// LIKE
+// ❤️ LIKE
 async function likePost(id){
-    await fetch("/likePost",{
+    await fetch(BASE_URL + "/likePost",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({id})
     });
 }
 
-// COMMENT
+// 💬 COMMENT
 async function commentPost(id){
     const input = document.getElementById("c"+id);
     const comment = input.value;
 
-    await fetch("/commentPost",{
+    await fetch(BASE_URL + "/commentPost",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
@@ -144,103 +133,13 @@ async function commentPost(id){
     input.value="";
 }
 
-// AUTO REFRESH EVERY 2 SEC
+// 🔁 AUTO REFRESH
 setInterval(loadPosts,2000);
 
-// INITIAL LOAD
+// 🚀 INITIAL LOAD
 loadPosts();
 
 </script>
 
-</body>
-</html>
-      <option>1</option>
-      <option>2</option>
-    </select>
-
-    <select id="sec">
-      <option>A</option>
-      <option>B</option>
-    </select>
-
-    <textarea id="msg" placeholder="Write your message..."></textarea>
-
-    <button onclick="add()">Post</button>
-  </div>
-
-  <div id="f"></div>
-
-</div>
-
-<script>
-let role = localStorage.getItem('role');
-let user = localStorage.getItem('user');
-
-let data = [];
-let lastLength = 0;
-
-// 🔄 LOAD MESSAGES
-async function load(){
-  let newData = await fetch('/forum').then(r=>r.json());
-
-  if(newData.length !== lastLength){
-    data = newData;
-    render(data);
-    lastLength = data.length;
-
-    // auto scroll to bottom
-    window.scrollTo(0, document.body.scrollHeight);
-  }
-}
-
-// 💬 RENDER CHAT CARDS
-function render(arr){
-  f.innerHTML = arr.length
-  ? arr.map((x,i)=>`
-    <div class="card">
-      <b>${x.user} (${x.dept}-${x.year}-${x.sec})</b>
-      <p>${x.msg}</p>
-      ${role==='admin' ? `<button onclick="del(${i})">Delete</button>` : ''}
-    </div>
-  `).join('')
-  : "<div class='card'>No posts yet</div>";
-}
-
-// ➕ ADD MESSAGE
-async function add(){
-  if(!msg.value.trim()) return alert("Enter message");
-
-  await fetch('/forum',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      msg:msg.value,
-      dept:dept.value,
-      year:year.value,
-      sec:sec.value,
-      user:user
-    })
-  });
-
-  msg.value = "";
-  load();
-}
-
-// ❌ DELETE (ADMIN ONLY)
-async function del(i){
-  await fetch('/forum/'+i,{
-    method:'DELETE',
-    headers:{'role':role}
-  });
-  load();
-}
-
-// 🚀 INITIAL LOAD
-load();
-
-// 🔁 AUTO REFRESH EVERY 2 SEC
-setInterval(load, 2000);
-
-</script>
 </body>
 </html>
