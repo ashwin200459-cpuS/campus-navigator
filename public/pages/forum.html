@@ -1,16 +1,60 @@
+<html>
+<head>
+<link rel="stylesheet" href="../css/style.css">
+</head>
 
-<html><head><link rel='stylesheet' href='../css/style.css'></head>
 <body>
-<div class='container'>
-<div class='card'>
-<h2>Forum</h2>
-<input id='msg'><button onclick='add()'>Post</button>
-<div id='f'></div>
+<div class="container">
+
+  <div class="card">
+    <h2>Forum</h2>
+
+    <select id="dept">
+      <option>CSE</option>
+      <option>IT</option>
+    </select>
+
+    <select id="year">
+      <option>1</option>
+      <option>2</option>
+    </select>
+
+    <select id="sec">
+      <option>A</option>
+      <option>B</option>
+    </select>
+
+    <textarea id="msg" placeholder="Write your message..."></textarea>
+
+    <button onclick="add()">Post</button>
+  </div>
+
+  <div id="f"></div>
+
 </div>
-</div>
+
 <script>
-let role=localStorage.getItem('role'),user=localStorage.getItem('user'),data=[];
-async function load(){data=await fetch('/forum').then(r=>r.json());render(data);}
+let role = localStorage.getItem('role');
+let user = localStorage.getItem('user');
+
+let data = [];
+let lastLength = 0;
+
+// 🔄 LOAD MESSAGES
+async function load(){
+  let newData = await fetch('/forum').then(r=>r.json());
+
+  if(newData.length !== lastLength){
+    data = newData;
+    render(data);
+    lastLength = data.length;
+
+    // auto scroll to bottom
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+}
+
+// 💬 RENDER CHAT CARDS
 function render(arr){
   f.innerHTML = arr.length
   ? arr.map((x,i)=>`
@@ -20,14 +64,44 @@ function render(arr){
       ${role==='admin' ? `<button onclick="del(${i})">Delete</button>` : ''}
     </div>
   `).join('')
-  : "No posts yet";
+  : "<div class='card'>No posts yet</div>";
 }
+
+// ➕ ADD MESSAGE
 async function add(){
-await fetch('/forum',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg:msg.value,user:user})});
-load();
+  if(!msg.value.trim()) return alert("Enter message");
+
+  await fetch('/forum',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      msg:msg.value,
+      dept:dept.value,
+      year:year.value,
+      sec:sec.value,
+      user:user
+    })
+  });
+
+  msg.value = "";
+  load();
 }
+
+// ❌ DELETE (ADMIN ONLY)
 async function del(i){
-await fetch('/forum/'+i,{method:'DELETE',headers:{'role':role}});load();
+  await fetch('/forum/'+i,{
+    method:'DELETE',
+    headers:{'role':role}
+  });
+  load();
 }
+
+// 🚀 INITIAL LOAD
 load();
-</script></body></html>
+
+// 🔁 AUTO REFRESH EVERY 2 SEC
+setInterval(load, 2000);
+
+</script>
+</body>
+</html>
