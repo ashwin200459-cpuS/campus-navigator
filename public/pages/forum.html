@@ -12,7 +12,15 @@
 let role=localStorage.getItem('role'),user=localStorage.getItem('user'),data=[];
 async function load(){data=await fetch('/forum').then(r=>r.json());render(data);}
 function render(arr){
-f.innerHTML=arr.length?arr.map((x,i)=>`<p>${x.user}: ${x.msg} ${role==='admin'?`<button onclick='del(${i})'>X</button>`:''}</p>`).join(''):'No posts';
+  f.innerHTML = arr.length
+  ? arr.map((x,i)=>`
+    <div class="card">
+      <b>${x.user} (${x.dept}-${x.year}-${x.sec})</b>
+      <p>${x.msg}</p>
+      ${role==='admin' ? `<button onclick="del(${i})">Delete</button>` : ''}
+    </div>
+  `).join('')
+  : "No posts yet";
 }
 async function add(){
 await fetch('/forum',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg:msg.value,user:user})});
