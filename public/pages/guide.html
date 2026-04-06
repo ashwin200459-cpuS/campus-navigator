@@ -1,75 +1,347 @@
-<html>
-<head>
-<link rel="stylesheet" href="../css/style.css">
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Campus Navigator - Directory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#131b2c",
+                    "on-secondary-fixed-variant": "#3f4759",
+                    "background": "#0b1324",
+                    "inverse-primary": "#2259bf",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-tertiary": "#2f3131",
+                    "error": "#ffb4ab",
+                    "on-secondary": "#283042",
+                    "surface-container": "#171f30",
+                    "inverse-on-surface": "#283042",
+                    "surface": "#0b1324",
+                    "surface-tint": "#b1c5ff",
+                    "on-primary": "#002c70",
+                    "primary-container": "#3366cc",
+                    "surface-bright": "#31394b",
+                    "error-container": "#93000a",
+                    "surface-container-low": "#131b2c",
+                    "on-surface-variant": "#c3c6d5",
+                    "primary-fixed": "#d9e2ff",
+                    "outline": "#8d909e",
+                    "secondary-fixed-dim": "#bec6dd",
+                    "tertiary": "#c6c6c7",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-primary-fixed-variant": "#00419d",
+                    "on-secondary-container": "#b0b8ce",
+                    "on-surface": "#dae2fa",
+                    "secondary-container": "#41495c",
+                    "surface-variant": "#2d3547",
+                    "secondary": "#bec6dd",
+                    "tertiary-container": "#696b6b",
+                    "on-background": "#dae2fa",
+                    "primary": "#b1c5ff",
+                    "inverse-surface": "#dae2fa",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "primary-fixed-dim": "#b1c5ff",
+                    "surface-container-highest": "#2d3547",
+                    "outline-variant": "#434653",
+                    "surface-container-high": "#222a3b",
+                    "on-tertiary-container": "#ececec",
+                    "on-primary-container": "#e7ebff",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#0b1324",
+                    "secondary-fixed": "#dae2fa",
+                    "on-primary-fixed": "#001946",
+                    "surface-container-lowest": "#060e1e",
+                    "on-error": "#690005"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            backdrop-filter: blur(20px);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1324;
+            color: #dae2fa;
+        }
+        .space-grotesk {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
 </head>
-<body>
-<div class='container'>
-<div class="card">
-<h2>Guide</h2>
-
-<input id="search" placeholder="Search locations...">
-
-<div id="list"></div>
-<div id="form"></div>
-
+<body class="bg-background text-on-background min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0b1324]/60 backdrop-blur-xl flex justify-between items-center px-6 h-16 w-full shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-widest text-[#b1c5ff] uppercase font-['Space_Grotesk']">CampusNavigator</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="font-['Space_Grotesk'] tracking-tight text-slate-400 hover:text-[#b1c5ff] transition-colors duration-300" href="#">Dashboard</a>
+<a class="font-['Space_Grotesk'] tracking-tight text-[#b1c5ff] border-b-2 border-[#b1c5ff] pb-1 hover:text-[#b1c5ff] transition-colors duration-300" href="#">Directory</a>
+<a class="font-['Space_Grotesk'] tracking-tight text-slate-400 hover:text-[#b1c5ff] transition-colors duration-300" href="#">Schedule</a>
+<a class="font-['Space_Grotesk'] tracking-tight text-slate-400 hover:text-[#b1c5ff] transition-colors duration-300" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-4 mr-4">
+<span class="material-symbols-outlined text-[#b1c5ff] cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-[#b1c5ff] cursor-pointer">settings</span>
+</div>
+<img alt="User profile" class="w-8 h-8 rounded-full border border-outline-variant/30" data-alt="Close up portrait of a young professional person in soft cinematic lighting against a dark blurred background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmiCsqX90IdrarXrjYD-qEVd4iGkFggvECJxxERB_1wC8w6szd1BgBZSNrFkjQYXCZxQZ83D6yhT6_5rjJgCXOfmSL0WUEFym4V8bcyOo8CK7va9k0wH23gZEAyIEaw3t5B2H_Nbjrhstq54G7Issn-RCyV0N0fJ8wEgskr_GYxwNuq6tlxCdaLCdN9CUi2Ejo0fWi3jEtRrmPhKVHipgAssBhUnQK75o_QO-taAbBTd6iUIGPYSaRCAUVHuwpY4pldq339mux2uwD"/>
+</div>
+</header>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="hidden md:flex h-screen w-64 fixed left-0 top-0 flex flex-col py-8 bg-[#060e1e] shadow-2xl shadow-black z-40">
+<div class="px-6 mb-12">
+<h1 class="text-[#b1c5ff] font-black font-['Space_Grotesk'] text-sm uppercase tracking-widest">Monolith AI</h1>
+<p class="text-slate-500 text-[10px] uppercase tracking-[0.2em]">University Systems</p>
+</div>
+<nav class="flex flex-col flex-1">
+<a class="text-slate-500 py-3 px-6 hover:text-slate-300 font-['Space_Grotesk'] text-sm uppercase tracking-widest hover:bg-[#131b2c] transition-all duration-200" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</div>
+</a>
+<a class="text-[#b1c5ff] bg-[#3366cc]/20 rounded-r-full py-3 px-6 border-l-4 border-[#b1c5ff] font-['Space_Grotesk'] text-sm uppercase tracking-widest transition-all duration-200" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">database</span>
+<span>Directory</span>
+</div>
+</a>
+<a class="text-slate-500 py-3 px-6 hover:text-slate-300 font-['Space_Grotesk'] text-sm uppercase tracking-widest hover:bg-[#131b2c] transition-all duration-200" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">calendar_today</span>
+<span>Schedule</span>
+</div>
+</a>
+<a class="text-slate-500 py-3 px-6 hover:text-slate-300 font-['Space_Grotesk'] text-sm uppercase tracking-widest hover:bg-[#131b2c] transition-all duration-200" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">person</span>
+<span>Settings</span>
+</div>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full bg-primary-container text-white py-3 rounded-xl font-['Space_Grotesk'] text-xs tracking-widest uppercase hover:bg-primary transition-colors active:scale-95">
+                Emergency Contact
+            </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="md:pl-64 pt-24 pb-32 px-4 md:px-12">
+<div class="max-w-6xl mx-auto">
+<!-- Hero Search Area -->
+<section class="mb-12">
+<h2 class="text-display-lg font-headline text-5xl md:text-6xl font-bold tracking-tight mb-8 text-on-surface">
+                    Find your <span class="text-primary">Destination</span>
+</h2>
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/50 to-primary-container/30 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000"></div>
+<div class="relative flex items-center bg-surface-container-low rounded-2xl px-6 py-5 border border-outline-variant/10 group-focus-within:border-primary/40 transition-all">
+<span class="material-symbols-outlined text-primary text-3xl mr-4">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-xl font-body text-on-surface placeholder:text-slate-600" placeholder="Search buildings, labs, or faculty offices..." type="text"/>
+<div class="hidden md:flex items-center gap-2 text-slate-500 font-label text-xs tracking-widest">
+<span class="px-2 py-1 bg-surface-container-highest rounded border border-outline-variant/20">CMD</span>
+<span class="px-2 py-1 bg-surface-container-highest rounded border border-outline-variant/20">K</span>
 </div>
 </div>
-
-<script>
-let role = localStorage.getItem('role');
-let data = [];
-
-async function load(){
-  data = await fetch('/guide').then(r=>r.json());
-  render(data);
-
-  if(role === 'admin'){
-    form.innerHTML = `
-      <input id="n" placeholder="Name">
-      <input id="l" placeholder="Location">
-      <input id="d" placeholder="Description">
-      <button onclick="add()">Add</button>
-    `;
-  }
-}
-
-function render(arr){
-  list.innerHTML = arr.length
-  ? arr.map(x => `
-    <div class="card">
-      <b>${x.name}</b><br>
-      ${x.location}<br>
-      <small>${x.desc || ''}</small>
-    </div>
-  `).join('')
-  : "No locations found";
-}
-
-search.oninput = () => {
-  let val = search.value.toLowerCase();
-  render(data.filter(x =>
-    x.name.toLowerCase().includes(val) ||
-    x.location.toLowerCase().includes(val)
-  ));
-};
-
-async function add(){
-  await fetch('/guide',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'role':role
-    },
-    body:JSON.stringify({
-      name:n.value,
-      location:l.value,
-      desc:d.value
-    })
-  });
-  load();
-}
-
-load();
-</script>
-</body>
-</html>
+</div>
+<!-- Filter Chips -->
+<div class="flex flex-wrap gap-3 mt-8">
+<button class="px-6 py-2 rounded-full bg-primary-container text-on-primary-container font-label text-sm tracking-widest shadow-[0_0_15px_rgba(177,197,255,0.2)]">Academic</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-high text-slate-400 font-label text-sm tracking-widest hover:text-primary transition-colors">Housing</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-high text-slate-400 font-label text-sm tracking-widest hover:text-primary transition-colors">Dining</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-high text-slate-400 font-label text-sm tracking-widest hover:text-primary transition-colors">Labs</button>
+<button class="px-6 py-2 rounded-full bg-surface-container-high text-slate-400 font-label text-sm tracking-widest hover:text-primary transition-colors">Athletics</button>
+</div>
+</section>
+<!-- Results Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Buildings List (Bento-style Column) -->
+<div class="lg:col-span-2 space-y-6">
+<!-- Featured Result Card -->
+<div class="bg-surface-container-low rounded-3xl p-8 flex flex-col md:flex-row gap-8 items-start hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="w-full md:w-48 h-48 bg-surface-container-lowest rounded-2xl flex items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent"></div>
+<span class="material-symbols-outlined text-6xl text-primary font-light" style="font-variation-settings: 'FILL' 0, 'wght' 100;">domain</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label text-[10px] tracking-[0.3em] uppercase text-primary font-bold">Featured Building</span>
+<span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Open Now</span>
+</div>
+<h3 class="text-3xl font-headline font-bold text-on-surface mb-3 group-hover:text-primary transition-colors">Maxwell Engineering Hall</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Home to the Advanced Robotics Department and Quantum Computing Labs. Features 24/7 study zones and a dedicated faculty lounge.</p>
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="font-label text-[10px] text-slate-500 uppercase tracking-widest">Level</span>
+<span class="text-on-surface font-headline font-medium">B4 to 12</span>
+</div>
+<div class="w-px h-8 bg-outline-variant/30"></div>
+<div class="flex flex-col">
+<span class="font-label text-[10px] text-slate-500 uppercase tracking-widest">Occupancy</span>
+<span class="text-on-surface font-headline font-medium">65% Capacity</span>
+</div>
+</div>
+</div>
+</div>
+<!-- List Items -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/5 hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-4 mb-4">
+<div class="p-3 bg-surface-container-high rounded-xl">
+<span class="material-symbols-outlined text-primary">biotech</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Curie Science Lab</h4>
+<span class="font-label text-[10px] text-slate-500 uppercase tracking-widest">Academic • South Wing</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant font-body">
+<span>3rd Floor, Room 302</span>
+<span class="material-symbols-outlined text-sm">arrow_forward_ios</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/5 hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-4 mb-4">
+<div class="p-3 bg-surface-container-high rounded-xl">
+<span class="material-symbols-outlined text-primary">local_library</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Main Library Annex</h4>
+<span class="font-label text-[10px] text-slate-500 uppercase tracking-widest">Resources • Central</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant font-body">
+<span>Public Access 08:00 - 22:00</span>
+<span class="material-symbols-outlined text-sm">arrow_forward_ios</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/5 hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-4 mb-4">
+<div class="p-3 bg-surface-container-high rounded-xl">
+<span class="material-symbols-outlined text-primary">restaurant</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">The Hub Dining Hall</h4>
+<span class="font-label text-[10px] text-slate-500 uppercase tracking-widest">Dining • North Square</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant font-body">
+<span>Busy: 15min Wait</span>
+<span class="material-symbols-outlined text-sm">arrow_forward_ios</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/5 hover:bg-surface-container-low transition-all">
+<div class="flex items-center gap-4 mb-4">
+<div class="p-3 bg-surface-container-high rounded-xl">
+<span class="material-symbols-outlined text-primary">apartment</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">West Gate Housing</h4>
+<span class="font-label text-[10px] text-slate-500 uppercase tracking-widest">Housing • West End</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant font-body">
+<span>Keycard Access Only</span>
+<span class="material-symbols-outlined text-sm">arrow_forward_ios</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Detailed View Sidebar (The "Monolith" Detail Card) -->
+<div class="lg:col-span-1">
+<div class="sticky top-24 bg-surface-container-low rounded-[2.5rem] p-8 shadow-2xl border border-outline-variant/10">
+<div class="relative w-full aspect-square bg-[#060e1e] rounded-3xl mb-8 overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#3366cc 1px, transparent 1px); background-size: 20px 20px;"></div>
+<!-- Blueprint Icon -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-48 h-48 relative">
+<div class="absolute inset-0 border border-primary/20 rounded transform rotate-45"></div>
+<div class="absolute inset-2 border border-primary/40 rounded transform rotate-12"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-7xl text-primary font-thin">architecture</span>
+</div>
+<div class="absolute bottom-0 right-0 p-2 font-label text-[8px] text-primary/50 tracking-widest uppercase">System.Arch_V2.0</div>
+</div>
+</div>
+<div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background to-transparent"></div>
+</div>
+<h3 class="text-2xl font-headline font-bold text-on-surface mb-2">Detailed Blueprint</h3>
+<p class="font-label text-xs text-slate-500 uppercase tracking-widest mb-6">ID: CAMPUS-HAL-9000</p>
+<div class="space-y-6">
+<div class="flex justify-between items-center p-4 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">wifi</span>
+<span class="font-body text-sm font-medium">Gigabit Fiber</span>
+</div>
+<span class="text-emerald-400 text-[10px] font-bold uppercase">Optimal</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">thermostat</span>
+<span class="font-body text-sm font-medium">Temp Control</span>
+</div>
+<span class="text-on-surface text-[10px] font-medium">21.5°C</span>
+</div>
+<div class="flex justify-between items-center p-4 bg-surface-container-highest/50 rounded-2xl border border-outline-variant/10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">electric_bolt</span>
+<span class="font-body text-sm font-medium">EV Charging</span>
+</div>
+<span class="text-on-surface text-[10px] font-medium">Available</span>
+</div>
+</div>
+<button class="w-full mt-8 bg-gradient-to-r from-primary-container to-primary py-4 rounded-2xl text-on-primary font-headline font-bold tracking-widest uppercase shadow-[0_10px_30px_rgba(51,102,204,0.3)] hover:shadow-primary/50 transition-all active:scale-95">
+                            Start Navigation
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-6 md:hidden bg-[#0b1324]/80 backdrop-blur-2xl z-50 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-slate-500 p-2 hover:text-[#b1c5ff] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#3366cc] text-white rounded-xl p-2 shadow-[0_0_15px_rgba(177,197,255,0.4)] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 p-2 hover:text-[#b1c5ff] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">Events</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 p-2 hover:text-[#b1c5ff] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase mt-1">Profile</span>
+</a>
+</nav>
+</body></html>
