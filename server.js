@@ -12,42 +12,19 @@ let users = [];
 let pendingAdmins = [];
 let posts = [];
 
-// ================= AUTH SYSTEM =================
+// ================= AUTH =================
 
-// USER SIGNUP
-app.post("/signup", (req,res)=>{
-    const {userId, password} = req.body;
+app.post("/signup",(req,res)=>{
+    const {userId,password} = req.body;
 
-    const exists = users.find(u=>u.userId===userId);
-    if(exists) return res.json({success:false, message:"User already exists"});
+    if(users.find(u=>u.userId===userId)){
+        return res.json({success:false,message:"User exists"});
+    }
 
     users.push({userId,password,role:"user"});
     res.json({success:true});
 });
 
-// ADMIN REQUEST (NOT DIRECT SIGNUP)
-app.post("/requestAdmin", (req,res)=>{
-    const {userId,password} = req.body;
-
-    pendingAdmins.push({userId,password});
-    res.json({success:true, message:"Request sent"});
-});
-
-// ADMIN APPROVAL (ONLY YOU USE THIS)
-app.post("/approveAdmin",(req,res)=>{
-    const {userId} = req.body;
-
-    const index = pendingAdmins.findIndex(u=>u.userId===userId);
-    if(index===-1) return res.json({success:false});
-
-    const admin = pendingAdmins[index];
-    users.push({...admin, role:"admin"});
-    pendingAdmins.splice(index,1);
-
-    res.json({success:true});
-});
-
-// LOGIN
 app.post("/login",(req,res)=>{
     const {userId,password} = req.body;
 
@@ -55,27 +32,20 @@ app.post("/login",(req,res)=>{
 
     if(!user) return res.json({success:false});
 
-    res.json({
-        success:true,
-        user:{
-            userId:user.userId,
-            role:user.role
-        }
-    });
+    res.json({success:true,user});
 });
 
-// ================= FORUM SYSTEM =================
+// ================= FORUM =================
 
-// CREATE POST
 app.post("/createPost",(req,res)=>{
-    const {userId, text, image} = req.body;
+    const {userId,text,image} = req.body;
 
     const post = {
         id: Date.now(),
         userId,
         text,
         image,
-        likes: 0,
+        likes:0,
         comments:[]
     };
 
@@ -83,12 +53,10 @@ app.post("/createPost",(req,res)=>{
     res.json({success:true});
 });
 
-// GET POSTS
 app.get("/getPosts",(req,res)=>{
     res.json(posts);
 });
 
-// LIKE POST
 app.post("/likePost",(req,res)=>{
     const {id} = req.body;
 
@@ -98,24 +66,23 @@ app.post("/likePost",(req,res)=>{
     res.json({success:true});
 });
 
-// COMMENT
 app.post("/commentPost",(req,res)=>{
-    const {id, userId, comment} = req.body;
+    const {id,userId,comment} = req.body;
 
     const post = posts.find(p=>p.id==id);
-    if(post){
-        post.comments.push({userId, comment});
-    }
+    if(post) post.comments.push({userId,comment});
 
     res.json({success:true});
 });
 
 // ================= ROOT =================
-app.get("/", (req,res)=>{
-    res.send("Campus Navigator Backend Running 🚀");
+app.get("/",(req,res)=>{
+    res.send("Backend running 🚀");
 });
 
-// ================= SERVER =================
-app.listen(5000, ()=>{
-    console.log("Server running on http://localhost:5000");
+// ================= PORT FIX =================
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT,()=>{
+    console.log("Server running on port " + PORT);
 });
