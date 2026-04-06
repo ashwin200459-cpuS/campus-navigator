@@ -1,44 +1,79 @@
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const bcrypt = require("bcryptjs");
 
-const express=require('express'),fs=require('fs'),path=require('path');
-const app=express();app.use(express.json());app.use(express.static('public'));
-const dbp=path.join(__dirname,'data/db.json');
-const r=()=>JSON.parse(fs.readFileSync(dbp));
-const w=d=>fs.writeFileSync(dbp,JSON.stringify(d,null,2));
+const app = express();
+app.use(express.json());
+app.use(cors());
 
-app.post('/login',(req,res)=>{
- const {username,password}=req.body;
- let db=r();
- let user=db.users.find(u=>u.username===username&&u.password===password);
- if(!user) return res.status(401).json({error:'Invalid'});
- res.json(user);
+// DB
+mongoose.connect("mongodb://127.0.0.1:27017/campus");
+
+// Schema
+const UserSchema = new mongoose.Schema({
+    userId:String,
+    password:String,
+    role:{type:String, default:"user"},
+    adminRequest:{type:Boolean, default:false}
 });
 
-app.post('/register',(req,res)=>{
- let db=r();
- const {username,password}=req.body;
- if(db.users.find(u=>u.username===username))
-  return res.status(400).json({error:'User exists'});
- db.users.push({username,password,role:'user'});
- w(db);res.json({ok:true});
+const User = mongoose.model("User", UserSchema);
+
+// SIGNUP (USER ONLY)
+app.post("/signup", async (req,res)=>{
+    const {userId,password} = req.body;
+
+    const hashed = await bcrypt.hash(password,10);
+
+    await User.create({userId,password:hashed});
+
+    res.json({message:"User created"});
 });
 
-function isAdmin(req){return req.headers.role==='admin'}
+// LOGIN
+app.post("/login", async (req,res)=>{
+    const {userId,password} = req.body;
 
-['guide','notifications','teachers'].forEach(k=>{
- app.get('/'+k,(req,res)=>res.json(r()[k]));
- app.post('/'+k,(req,res)=>{
-  if(!isAdmin(req)) return res.status(403).json({error:'Forbidden'});
-  let db=r();db[k].push(req.body);w(db);res.json({ok:true});
- });
+    const user = await User.findOne({userId});
+
+    if(!user) return res.json({success:false});
+
+    const match = await bcrypt.compare(password,user.password);
+
+    if(!match) return res.json({success:false});
+
+    res.json({
+        success:true,
+        role:user.role
+    });
 });
 
-app.get('/forum',(req,res)=>res.json(r().forum));
-app.post('/forum',(req,res)=>{
- let db=r();db.forum.push(req.body);w(db);res.json({ok:true});
+// REQUEST ADMIN
+app.post("/request-admin", async (req,res)=>{
+    const {userId} = req.body;
+
+    await User.updateOne({userId},{adminRequest:true});
+
+    res.json({message:"Request sent to admin"});
 });
-app.delete('/forum/:i',(req,res)=>{
- if(!isAdmin(req)) return res.status(403).json({error:'Forbidden'});
- let db=r();db.forum.splice(req.params.i,1);w(db);res.json({ok:true});
+
+// GET REQUESTS (YOU ONLY)
+app.get("/admin-requests", async (req,res)=>{
+    const users = await User.find({adminRequest:true});
+    res.json(users);
 });
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Server running on port " + PORT));
+
+// APPROVE ADMIN (YOU CONTROL THIS)
+app.post("/approve-admin", async (req,res)=>{
+    const {userId} = req.body;
+
+    await User.updateOne(
+        {userId},
+        {role:"admin", adminRequest:false}
+    );
+
+    res.json({message:"User is now admin"});
+});
+
+app.listen(5000, ()=>console.log("Server running"));
