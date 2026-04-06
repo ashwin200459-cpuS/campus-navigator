@@ -3,4 +3,8 @@ body{margin:0;font-family:sans-serif;background:#0f172a;display:flex;justify-con
 .card{background:#fff;padding:25px;border-radius:15px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 .btn{background:#2563eb;color:white;padding:10px;border:none;border-radius:8px;margin:5px;cursor:pointer}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card {
+  margin: 10px auto;
+  max-width: 400px;
+}
 input,select{padding:8px;margin:5px;border-radius:6px;border:1px solid #ccc}
