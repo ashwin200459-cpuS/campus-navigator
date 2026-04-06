@@ -11,15 +11,15 @@ app.use(cors({
     origin: "*"
 }));
 
-// 🌍 PORT (Render uses process.env.PORT)
+// 🌐 PORT
 const PORT = process.env.PORT || 5000;
 
-// 🧠 CONNECT MONGODB ATLAS
+// 🧠 CONNECT DB
 mongoose.connect(process.env.MONGO_URI)
 .then(()=> console.log("MongoDB Connected"))
 .catch(err => console.log(err));
 
-// 📦 USER SCHEMA
+// 📦 SCHEMA
 const UserSchema = new mongoose.Schema({
     userId: { type:String, required:true, unique:true },
     password: { type:String, required:true },
@@ -29,7 +29,7 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", UserSchema);
 
-// 🧾 SIGNUP (USER ONLY)
+// 🧾 SIGNUP
 app.post("/signup", async (req,res)=>{
     try{
         const {userId,password} = req.body;
@@ -41,14 +41,11 @@ app.post("/signup", async (req,res)=>{
 
         const hashed = await bcrypt.hash(password,10);
 
-        await User.create({
-            userId,
-            password: hashed
-        });
+        await User.create({userId,password:hashed});
 
-        res.json({message:"Account created successfully"});
-    }catch(err){
-        res.status(500).json({message:"Error creating account"});
+        res.json({message:"Account created"});
+    }catch{
+        res.status(500).json({message:"Error"});
     }
 });
 
@@ -58,52 +55,46 @@ app.post("/login", async (req,res)=>{
         const {userId,password} = req.body;
 
         const user = await User.findOne({userId});
-        if(!user){
-            return res.json({success:false});
-        }
+        if(!user) return res.json({success:false});
 
         const match = await bcrypt.compare(password,user.password);
-        if(!match){
-            return res.json({success:false});
-        }
+        if(!match) return res.json({success:false});
 
         res.json({
             success:true,
-            role:user.role
+            role:user.role,
+            userId:user.userId
         });
 
-    }catch(err){
+    }catch{
         res.status(500).json({success:false});
     }
 });
 
-// 👑 REQUEST ADMIN ACCESS
+// 👑 REQUEST ADMIN
 app.post("/request-admin", async (req,res)=>{
     try{
         const {userId} = req.body;
 
-        await User.updateOne(
-            {userId},
-            {adminRequest:true}
-        );
+        await User.updateOne({userId},{adminRequest:true});
 
-        res.json({message:"Admin request sent"});
-    }catch(err){
+        res.json({message:"Request sent"});
+    }catch{
         res.status(500).json({message:"Error"});
     }
 });
 
-// 📋 GET ALL ADMIN REQUESTS (FOR YOU)
+// 📋 GET REQUESTS
 app.get("/admin-requests", async (req,res)=>{
     try{
         const users = await User.find({adminRequest:true});
         res.json(users);
-    }catch(err){
+    }catch{
         res.status(500).json([]);
     }
 });
 
-// ✅ APPROVE ADMIN (ONLY YOU SHOULD USE THIS)
+// ✅ APPROVE ADMIN
 app.post("/approve-admin", async (req,res)=>{
     try{
         const {userId} = req.body;
@@ -113,13 +104,13 @@ app.post("/approve-admin", async (req,res)=>{
             {role:"admin", adminRequest:false}
         );
 
-        res.json({message:"User promoted to admin"});
-    }catch(err){
+        res.json({message:"Approved"});
+    }catch{
         res.status(500).json({message:"Error"});
     }
 });
 
-// ❌ OPTIONAL: REJECT ADMIN REQUEST
+// ❌ REJECT ADMIN
 app.post("/reject-admin", async (req,res)=>{
     try{
         const {userId} = req.body;
@@ -129,8 +120,8 @@ app.post("/reject-admin", async (req,res)=>{
             {adminRequest:false}
         );
 
-        res.json({message:"Request rejected"});
-    }catch(err){
+        res.json({message:"Rejected"});
+    }catch{
         res.status(500).json({message:"Error"});
     }
 });
