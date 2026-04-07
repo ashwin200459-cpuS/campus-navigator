@@ -11,7 +11,7 @@
 <script>
 // 🔐 AUTH
 const user = JSON.parse(localStorage.getItem("user"));
-if(!user) window.location.href="index.html";
+if(!user) window.location.href = "index.html";
 
 // 🌐 BASE URL
 const BASE_URL = "https://campus-navigator-vtx6.onrender.com";
@@ -19,10 +19,10 @@ const BASE_URL = "https://campus-navigator-vtx6.onrender.com";
 
 <!-- NAV -->
 <div class="p-4 flex gap-6 bg-black">
-<a href="dashboard.html">Dashboard</a>
-<a href="guide.html">Guide</a>
-<a href="teachers.html">Teachers</a>
-<a href="forum.html" class="text-blue-400">Forum</a>
+<a href="/dashboard.html">Dashboard</a>
+<a href="/guide.html">Guide</a>
+<a href="/teachers.html">Teachers</a>
+<a href="/forum.html" class="text-blue-400">Forum</a>
 </div>
 
 <!-- CREATE POST -->
@@ -43,8 +43,13 @@ Post
 
 // 📝 CREATE POST
 async function createPost(){
-    const text = document.getElementById("postText").value;
+    const text = document.getElementById("postText").value.trim();
     const file = document.getElementById("imageInput").files[0];
+
+    if(!text && !file){
+        alert("Write something or add image");
+        return;
+    }
 
     let image = "";
 
@@ -62,79 +67,114 @@ async function createPost(){
 
 // 📤 SEND POST
 async function sendPost(text,image){
-    await fetch(BASE_URL + "/createPost",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            userId:user.userId,
-            text,
-            image
-        })
-    });
+    try{
+        await fetch(BASE_URL + "/createPost",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                userId:user.userId,
+                text,
+                image
+            })
+        });
+
+        // 🔥 RESET INPUTS
+        document.getElementById("postText").value = "";
+        document.getElementById("imageInput").value = "";
+
+        loadPosts();
+
+    } catch(err){
+        console.error("Post failed", err);
+    }
 }
 
 // 📥 LOAD POSTS
 async function loadPosts(){
-    const res = await fetch(BASE_URL + "/getPosts");
-    const data = await res.json();
+    try{
+        const res = await fetch(BASE_URL + "/getPosts");
+        const data = await res.json();
 
-    const container = document.getElementById("posts");
-    container.innerHTML = "";
+        const container = document.getElementById("posts");
+        container.innerHTML = "";
 
-    data.forEach(p=>{
-        container.innerHTML += `
-        <div class="bg-gray-800 p-4 rounded">
-            <h3 class="font-bold">${p.userId}</h3>
-            <p>${p.text}</p>
+        data.forEach(p=>{
+            container.innerHTML += `
+            <div class="bg-gray-800 p-4 rounded">
+                <h3 class="font-bold">${p.userId}</h3>
+                <p>${p.text}</p>
 
-            ${p.image ? `<img src="${p.image}" class="mt-2 rounded">` : ""}
+                ${p.image ? `<img src="${p.image}" class="mt-2 rounded max-h-60">` : ""}
 
-            <div class="flex gap-4 mt-3">
-                <button onclick="likePost(${p.id})">❤️ ${p.likes}</button>
+                <div class="flex gap-4 mt-3">
+                    <button onclick="likePost(${p.id})">❤️ ${p.likes}</button>
+                </div>
+
+                <div class="mt-3 flex gap-2">
+                    <input id="c${p.id}" placeholder="comment..." class="p-2 bg-gray-700 rounded w-full">
+                    <button onclick="commentPost(${p.id})" class="bg-blue-500 px-3 rounded">Send</button>
+                </div>
+
+                <div class="mt-2 space-y-1">
+                    ${p.comments.map(c=>`
+                        <p><b>${c.userId}:</b> ${c.comment}</p>
+                    `).join("")}
+                </div>
             </div>
+            `;
+        });
 
-            <div class="mt-3">
-                <input id="c${p.id}" placeholder="comment..." class="p-1 bg-gray-700 rounded">
-                <button onclick="commentPost(${p.id})">Send</button>
-            </div>
-
-            <div class="mt-2">
-                ${p.comments.map(c=>`<p><b>${c.userId}:</b> ${c.comment}</p>`).join("")}
-            </div>
-        </div>
-        `;
-    });
+    } catch(err){
+        console.error("Load failed", err);
+    }
 }
 
 // ❤️ LIKE
 async function likePost(id){
-    await fetch(BASE_URL + "/likePost",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({id})
-    });
+    try{
+        await fetch(BASE_URL + "/likePost",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({id})
+        });
+
+        loadPosts();
+
+    } catch(err){
+        console.error("Like failed", err);
+    }
 }
 
 // 💬 COMMENT
 async function commentPost(id){
     const input = document.getElementById("c"+id);
-    const comment = input.value;
+    const comment = input.value.trim();
 
-    await fetch(BASE_URL + "/commentPost",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            id,
-            userId:user.userId,
-            comment
-        })
-    });
+    if(!comment) return;
 
-    input.value="";
+    try{
+        await fetch(BASE_URL + "/commentPost",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                id, // change to postId if backend requires
+                userId:user.userId,
+                comment
+            })
+        });
+
+        input.value = "";
+
+        // 🔥 instant update
+        loadPosts();
+
+    } catch(err){
+        console.error("Comment failed", err);
+    }
 }
 
-// 🔁 AUTO REFRESH
-setInterval(loadPosts,2000);
+// 🔁 AUTO REFRESH (light)
+setInterval(loadPosts,3000);
 
 // 🚀 INITIAL LOAD
 loadPosts();
