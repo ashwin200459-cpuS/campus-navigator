@@ -15,6 +15,9 @@ if(!user) window.location.href = "index.html";
 
 // 🌐 BASE URL
 const BASE_URL = "https://campus-navigator-vtx6.onrender.com";
+
+// 🔁 CONTROL FLAG
+let isUpdating = false;
 </script>
 
 <!-- NAV -->
@@ -67,6 +70,8 @@ async function createPost(){
 
 // 📤 SEND POST
 async function sendPost(text,image){
+    isUpdating = true;
+
     try{
         await fetch(BASE_URL + "/createPost",{
             method:"POST",
@@ -78,15 +83,16 @@ async function sendPost(text,image){
             })
         });
 
-        // 🔥 RESET INPUTS
         document.getElementById("postText").value = "";
         document.getElementById("imageInput").value = "";
 
-        loadPosts();
+        await loadPosts();
 
     } catch(err){
         console.error("Post failed", err);
     }
+
+    isUpdating = false;
 }
 
 // 📥 LOAD POSTS
@@ -131,6 +137,8 @@ async function loadPosts(){
 
 // ❤️ LIKE
 async function likePost(id){
+    isUpdating = true;
+
     try{
         await fetch(BASE_URL + "/likePost",{
             method:"POST",
@@ -138,43 +146,55 @@ async function likePost(id){
             body:JSON.stringify({id})
         });
 
-        loadPosts();
+        await loadPosts();
 
     } catch(err){
         console.error("Like failed", err);
     }
+
+    isUpdating = false;
 }
 
-// 💬 COMMENT
+// 💬 COMMENT (FIXED)
 async function commentPost(id){
     const input = document.getElementById("c"+id);
     const comment = input.value.trim();
 
     if(!comment) return;
 
+    isUpdating = true;
+
     try{
-        await fetch(BASE_URL + "/commentPost",{
+        const res = await fetch(BASE_URL + "/commentPost",{
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({
-                id, // change to postId if backend requires
+                id, // change to postId if backend needs
                 userId:user.userId,
                 comment
             })
         });
 
+        const data = await res.json();
+        console.log("Comment response:", data);
+
         input.value = "";
 
-        // 🔥 instant update
-        loadPosts();
+        await loadPosts();
 
     } catch(err){
         console.error("Comment failed", err);
     }
+
+    isUpdating = false;
 }
 
-// 🔁 AUTO REFRESH (light)
-setInterval(loadPosts,3000);
+// 🔁 AUTO REFRESH (SAFE)
+setInterval(()=>{
+    if(!isUpdating){
+        loadPosts();
+    }
+},3000);
 
 // 🚀 INITIAL LOAD
 loadPosts();
