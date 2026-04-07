@@ -35,7 +35,7 @@ body { background-color: #0b1324; }
     <input id="loginPass" type="password" placeholder="Passcode"
         class="w-full p-3 bg-black/40 border border-gray-600 rounded"/>
 
-    <button id="loginBtn"
+    <button id="loginBtn" type="submit"
         class="w-full bg-gradient-to-r from-blue-500 to-blue-300 py-3 rounded font-bold tracking-widest">
         ACCESS SYSTEM
     </button>
@@ -48,7 +48,7 @@ body { background-color: #0b1324; }
     <input id="signupPass" type="password" placeholder="Passcode"
         class="w-full p-3 bg-black/40 border border-gray-600 rounded"/>
 
-    <button class="w-full bg-green-500 py-3 rounded font-bold">
+    <button type="submit" class="w-full bg-green-500 py-3 rounded font-bold">
         CREATE ACCOUNT
     </button>
 </form>
@@ -71,11 +71,26 @@ body { background-color: #0b1324; }
 // 🌐 BASE URL
 const BASE_URL = "https://campus-navigator-vtx6.onrender.com";
 
+// 📌 ELEMENTS
+const loginForm = document.getElementById("loginForm");
+const signupForm = document.getElementById("signupForm");
+
+const loginId = document.getElementById("loginId");
+const loginPass = document.getElementById("loginPass");
+const loginBtn = document.getElementById("loginBtn");
+
+const signupId = document.getElementById("signupId");
+const signupPass = document.getElementById("signupPass");
+
+const statusMsg = document.getElementById("statusMsg");
+const locationText = document.getElementById("locationText");
+
 // 🌌 TOGGLE
 function showLogin(){
     loginForm.classList.remove("hidden");
     signupForm.classList.add("hidden");
 }
+
 function showSignup(){
     signupForm.classList.remove("hidden");
     loginForm.classList.add("hidden");
@@ -112,17 +127,12 @@ loginForm.addEventListener("submit", async e=>{
             body:JSON.stringify({userId,password})
         });
 
-        if(!res.ok){
-            throw new Error("Server response failed");
-        }
+        if(!res.ok) throw new Error();
 
         const data = await res.json();
 
-        console.log("Login Response:", data); // 🔍 DEBUG
-
         if(data.success && data.user){
 
-            // SAVE USER
             localStorage.setItem("user", JSON.stringify(data.user));
 
             statusMsg.innerText="✅ Access Granted";
@@ -140,13 +150,13 @@ loginForm.addEventListener("submit", async e=>{
         }
 
     } catch(err){
-        console.error(err);
         statusMsg.innerText="🚨 Server Error";
     }
 
     loginBtn.innerText="ACCESS SYSTEM";
     loginBtn.disabled=false;
 });
+
 // 🧾 SIGNUP
 signupForm.addEventListener("submit", async e=>{
     e.preventDefault();
@@ -154,19 +164,31 @@ signupForm.addEventListener("submit", async e=>{
     const userId = signupId.value.trim();
     const password = signupPass.value.trim();
 
-    const res = await fetch(BASE_URL + "/signup",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({userId,password})
-    });
+    if(!userId || !password){
+        statusMsg.innerText="⚠️ Fill all fields";
+        return;
+    }
 
-    const data = await res.json();
+    try{
+        const res = await fetch(BASE_URL + "/signup",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({userId,password})
+        });
 
-    if(data.success){
-        statusMsg.innerText="✅ Account Created";
-        showLogin();
-    } else {
-        statusMsg.innerText=data.message || "Error";
+        if(!res.ok) throw new Error();
+
+        const data = await res.json();
+
+        if(data.success){
+            statusMsg.innerText="✅ Account Created";
+            showLogin();
+        } else {
+            statusMsg.innerText=data.message || "Error";
+        }
+
+    } catch(err){
+        statusMsg.innerText="🚨 Server Error";
     }
 });
 
@@ -175,16 +197,26 @@ async function requestAdmin(){
     const userId = prompt("Enter your User ID");
     const password = prompt("Enter your Password");
 
-    if(!userId || !password) return;
+    if(!userId || !password){
+        statusMsg.innerText="⚠️ Cancelled";
+        return;
+    }
 
-    const res = await fetch(BASE_URL + "/requestAdmin",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({userId,password})
-    });
+    try{
+        const res = await fetch(BASE_URL + "/requestAdmin",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({userId,password})
+        });
 
-    const data = await res.json();
-    statusMsg.innerText = data.message;
+        if(!res.ok) throw new Error();
+
+        const data = await res.json();
+        statusMsg.innerText = data.message;
+
+    } catch(err){
+        statusMsg.innerText="🚨 Server Error";
+    }
 }
 
 </script>
